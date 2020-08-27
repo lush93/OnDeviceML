@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.nogotech.ondeviceml.R
 import com.nogotech.ondeviceml.databinding.FragmentHomeBinding
+import timber.log.Timber
 
 class HomeFragment : Fragment() {
 
@@ -37,6 +38,7 @@ class HomeFragment : Fragment() {
         binding.lifecycleOwner = this
 
         homeViewModel.loadBitmap(R.drawable.img_aso)
+        homeViewModel.processImage(requireActivity())
 
 
         return binding.root
