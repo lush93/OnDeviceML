@@ -30,9 +30,6 @@ import kotlin.math.min
 /** A classifier specialized to label images using TensorFlow Lite. */
 abstract class Predictor(activity: Activity, device: Device, numThreads: Int) {
     companion object{
-        /** Number of results to show in the UI.  */
-        private const val MAX_RESULTS = 3
-
         /**
          * Creates a classifier with the provided configuration.
          *
@@ -60,32 +57,13 @@ abstract class Predictor(activity: Activity, device: Device, numThreads: Int) {
              * A sortable score for how good the recognition is relative to others. Higher should be better.
              */
             private val confidence: Float,
-            /** Optional location within the source image for the location of the recognized object.  */
-            private var location: RectF?
         ){
-
-            fun getId(): String {
-                return id
-            }
-
-            fun getTitle(): String {
-                return title
-            }
-
             fun getConfidence(): Float {
                 return confidence
             }
 
-            fun getLocation(): RectF {
-                return RectF(location)
-            }
-
             override fun toString(): String {
-                var resultString = "[$id] $title " + String.format("(%.1f%%) ", confidence * 100.0f)
-
-                location?.let{
-                    resultString += "$location "
-                }
+                val resultString = "[$id] $title " + String.format("(%.1f%%) ", confidence * 100.0f)
 
                 return resultString.trim { it <= ' ' }
             }
@@ -102,14 +80,11 @@ abstract class Predictor(activity: Activity, device: Device, numThreads: Int) {
             }
 
             for ((key, value) in labelProb) {
-                pq.add(Recognition("" + key, key, value, null))
+                pq.add(Recognition("" + key, key, value))
             }
 
             val recognitions = ArrayList<Recognition>()
-            val recognitionsSize = min(pq.size, MAX_RESULTS)
-            for (i in 0 until recognitionsSize) {
-                recognitions.add(pq.poll()!!)
-            }
+            recognitions.add(pq.poll()!!)
             return recognitions
         }
     }
